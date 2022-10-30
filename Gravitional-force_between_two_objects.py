@@ -1,0 +1,6 @@
+m1=float(input("First mass: "))
+m2=float(input("Second mass: "))
+r=float(input("Distance between the centres of the masses: "))
+G=6.673*(10**-11)
+f=(G*m1*m2)/(r**2)
+print("Gravitational Force : ",round(f,2),"N")
