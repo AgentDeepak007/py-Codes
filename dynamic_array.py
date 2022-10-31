@@ -1,37 +1,67 @@
-import ctypes
 class DynamicArray(object):
-   #Initialize it
-   def __init__(self):
-      #We'll have three attributes
-      self.n = 0 # by default
-      self.capacity = 1 # by default
-      self.A = self.make_array(self.capacity) # make_array will be defined later
-   #Length method
-   def __len__(self):
-      #It will return number of elements in the array
-      return self.n
-   def __getitem__(self, k):
-      #it will return the elements at the index k
-   if not 0 <=k <self.n:
-      return IndexError('k is out of bounds')
-   return self.A[k]
-   def append(self, element):
-   #checking the capacity
-   if self.n == self.capacity:
-      #double the capacity for the new array i.e
-      self.resize(2*self.capacity) # _resize is the method that is defined later
-   # set the n indexes of array A to elements
-   self.A[self.n] = element
-   self.n += 1
-   def _resize(self, new_cap): #new_cap is for new capacity
-   #declare array B
-   B = self.make_array(new_cap)
-   for k in range(self.n):
-      B[k] = self.A[k] # referencing the elements from array A to B
-      #ones refered then
-   self.A = B # A is now the array B
-   self.capacity = new_cap # resets the capacity
-   #making the make-array method using ctypes
-   def make_array(self,new_cap):
-      return (new_cap * ctypes.py_object)()
-arr = DynamicArray()
+    def __init__(self):
+        # actual number of elements in dynamic array
+        self.size = 0
+        # maximum capacity of the dynamic array
+        self.capacity = 1
+        self.array = self._create_array(self.capacity)
+    
+    def __len__(self):
+        '''
+        len(array): returns the length of the array
+        '''
+        return self.size
+
+    def __getitem__(self, index):
+        '''
+        array[index]: returns the element at given index
+        '''
+        if not 0 <= index <self.size: 
+            raise IndexError('Given index: {0} is larger than array size {1}'.format(index, self.size))
+
+        return self.array[index]
+    
+    def _create_array(self, length):
+        '''
+        create the array with given size
+        '''
+        return [None] * length
+
+    def _resize(self, new_capacity):
+        '''
+        resize the array to the new capacity
+        '''
+        new_array = self._create_array(new_capacity)
+
+        # reassign the elements in the old array into the new array
+        for i in range(self.size):
+            new_array[i] = self.array[i]
+            
+        self.array = new_array
+        self.capacity = new_capacity
+
+    def append(self, element):
+        '''
+        add a new element to the end of the array
+        '''
+        if self.size == self.capacity:
+            self._resize(2 * self.capacity)
+
+        self.array[self.size] = element
+        self.size += 1
+
+    def pop(self): 
+        '''
+        pop the last element from the end of the array
+        '''
+        element = None
+        
+        if self.size > 0:
+            element = self.array[self.size - 1]
+            self.array[self.size - 1] = None
+            self.size -= 1
+        
+            if self.size <= self.capacity // 4:
+                self._resize(self.capacity // 2)
+            
+        return element
